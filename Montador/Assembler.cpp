@@ -40,10 +40,11 @@ void Assembler::assemble() {
  *********************************************/
 void Assembler::passagemZero() {
     int i, j;
-    string apoio2;
+    bool posiDATA = false, posiTEXT = false;
+    string apoio2, apoio3 = " ";
     ofstream preProcessado;
     ifstream codigoFonte(this->file_path);           // Abre o arquivo com o codigo fonte
-
+    
     this->criaListas();     // cria lista de OPcodes e Diretivas
 
     // Verifica se o arquivo com o codigo fonte foi, de fato, aberto
@@ -74,6 +75,15 @@ void Assembler::passagemZero() {
             // Cria lista temporaria de rotulos com EQU
             for (i = 0; i < vetor_palavras.size(); i++)
             {
+                if (vetor_palavras.at(i) == "DATA")
+                {
+                    posiDATA = true;
+                }
+                if (vetor_palavras.at(i) == "TEXT")
+                {
+                    posiTEXT = true;
+
+                }
                 if (vetor_palavras.at(i) == "EQU")
                 {
                     this->apoio = vetor_palavras.at(i - 1);
@@ -154,29 +164,52 @@ void Assembler::passagemZero() {
             if (this->apoio.find("IF 0") != std::string::npos) {
                 this->flag_salva_linha = -1;
             }
-
             // Escreve no arquivo pre-processado se a linha nao tem IF/EQU ou se a linha anterior nao era IF 0
             if (this->flag_salva_linha == 1) {
+                if(posiTEXT == true)
+                {
+                    if (vetor_palavras.size() > 1) 
+                    {
+                        this->saida = this->apoio + "\n";
+                    }
+                    else if (this->apoio.find(":") != std::string::npos) 
+                    {
+                        this->saida = this->apoio;
+                    }
+                    else {
+                        if (this->apoio != "") 
+                        {
+                            this->saida = this->apoio + "\n";
+                        }
+                        else this->saida = this->apoio;
+                    }
 
-                if (vetor_palavras.size() > 1) {
-                    this->saida = this->apoio + "\n";
+                    // Verifica se o arquivo com o codigo pre-processado foi aberto
+                    if(preProcessado.is_open()) {
+                        preProcessado << this->saida;        // Escreve a linha certa no arquivo pre-processado
+                    }
                 }
-                else if (this->apoio.find(":") != std::string::npos) {
-                    this->saida = this->apoio;
-                }
-                else {
-					if (this->apoio != "") 
-					{
-						this->saida = this->apoio + "\n";
-					}
-					else this->saida = this->apoio;
-                }
-
-                // Verifica se o arquivo com o codigo pre-processado foi aberto
-                if(preProcessado.is_open()) {
-                    preProcessado << this->saida;        // Escreve a linha certa no arquivo pre-processado
+                else
+                {
+                    if (vetor_palavras.size() > 1) 
+                    {
+                        apoio3 += this->apoio + "\n";
+                    }
+                    else if (this->apoio.find(":") != std::string::npos) 
+                    {
+                        apoio3 += this->apoio;
+                    }
+                    else {
+                        if (this->apoio != "") 
+                        {
+                            apoio3 += this->apoio + "\n";
+                        }
+                        else apoio3 += this->apoio;
+                    }
                 }
             }
+            
+        
 
             this->flag_salva_linha++;
 
@@ -186,6 +219,10 @@ void Assembler::passagemZero() {
 
             vetor_palavras.clear();
 
+        }
+            if(preProcessado.is_open()) 
+        {
+            preProcessado << apoio3;        // Escreve a linha certa no arquivo pre-processado
         }
 
         codigoFonte.close();     // Fecha o arquivo com o codigo fonte
