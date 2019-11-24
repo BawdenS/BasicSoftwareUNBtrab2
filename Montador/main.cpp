@@ -18,10 +18,13 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    string filepath = argv[1];
-
+	if(argc == 2)
+	{
+	string filepath = argv[1];
 	Assembler* assembler = new Assembler(filepath);
 	assembler->assemble();
+	}
+	
 
 	return 0;
 }

@@ -40,7 +40,7 @@ void Assembler::assemble() {
  *********************************************/
 void Assembler::passagemZero() {
     int i, j;
-
+    string apoio2;
     ofstream preProcessado;
     ifstream codigoFonte(this->file_path);           // Abre o arquivo com o codigo fonte
 
@@ -88,11 +88,34 @@ void Assembler::passagemZero() {
             {
                 for (j = 0; j < lista_temp.size(); j++)
                 {
-                    if(vetor_palavras.at(i) == lista_temp.at(j))
+                    if(vetor_palavras.at(i).find(lista_temp.at(j)) != std::string::npos)
                     {
-                        vetor_palavras.at(i) = lista_temp_valor.at(j);
+                        apoio2.clear();
+                        this->apoio = vetor_palavras.at(i).substr(0,vetor_palavras.at(i).find(lista_temp.at(j))); 
+                        if(vetor_palavras.at(i).find(",") != std::string::npos)
+                        {
+                            if(vetor_palavras.at(i).find(lista_temp.at(j)) < vetor_palavras.at(i).find(",")){
+                                apoio2 = vetor_palavras.at(i).substr(vetor_palavras.at(i).find(","), vetor_palavras.at(i).size()-1);
+                            }
+                        }
+                        vetor_palavras.at(i) = this->apoio + lista_temp_valor.at(j) + apoio2;
+                        this->apoio.clear();
+                    }
+                    if(vetor_palavras.at(i).find(lista_temp.at(j)) != std::string::npos)
+                    {
+                        apoio2.clear();
+                        this->apoio = vetor_palavras.at(i).substr(0,vetor_palavras.at(i).find(lista_temp.at(j))); 
+                        if(vetor_palavras.at(i).find(",") != std::string::npos)
+                        {
+                            if(vetor_palavras.at(i).find(lista_temp.at(j)) < vetor_palavras.at(i).find(",")){
+                                apoio2 = vetor_palavras.at(i).substr(vetor_palavras.at(i).find(","), vetor_palavras.at(i).size()-1);
+                            }
+                        }
+                        vetor_palavras.at(i) = this->apoio + lista_temp_valor.at(j) + apoio2;
+                        this->apoio.clear();
                     }
                 }
+
             }
 
 			// Trata o caso de achar uma virgula

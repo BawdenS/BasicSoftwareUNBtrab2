@@ -1,0 +1,7 @@
+Section text
+add cinco
+sub L2
+SECTION data
+cinco: CONST 5
+oito: SPACE 3
+l1: space
