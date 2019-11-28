@@ -1,6 +1,6 @@
 /*###################################################################
 # Universidade de Brasilia                                          #
-#      Disciplina de Software Basico - Trabalho 1                   #
+#      Disciplina de Software Basico - Trabalho 2                   #
 #                                                                   #
 #           Alunos                                  Matriculas      #
 #                                                                   #
@@ -20,11 +20,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
 	if(argc == 2)
 	{
-	string filepath = argv[1];
-	Assembler* assembler = new Assembler(filepath);
-	assembler->assemble();
+        string filepath = argv[1];
+        Assembler* assembler = new Assembler(filepath);
+        assembler->assemble();
 	}
-	
 
 	return 0;
 }
