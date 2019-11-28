@@ -30,6 +30,22 @@ int main(int argc, char* argv[]) {
         Assembler* assembler = new Assembler(filepath);
         assembler->assemble();
 	}
+ 	// Dois arquivos
+    else if(argc == 3)
+    {
+        cout << "TEM 2 AQRUIVOS HEIN" << endl;
+        // Primeiro arquivo
+        string filepath = argv[1];
+        Assembler* assembler = new Assembler(filepath);
+        assembler->assemble();
 
-	return 0;
+        // Segundo arquivo
+        string filepath2 = argv[2];
+        Assembler* assembler2 = new Assembler(filepath2);
+        assembler2->assemble();
+    }
+
+
+
+    return 0;
 }
