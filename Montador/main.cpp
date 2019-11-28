@@ -18,7 +18,13 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	if(argc == 2)
+
+    // Checa a quantidade de argumentos (arquivos .asm) passados ao executar o programa
+    if(argc < 2)
+        cout << "Erro! Arquivos .asm nao especificados!" << endl;
+
+    // Apenas um arquivo
+	else if(argc == 2)
 	{
         string filepath = argv[1];
         Assembler* assembler = new Assembler(filepath);
