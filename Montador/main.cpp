@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
     // Apenas um arquivo
 	else if(argc == 2)
 	{
+	    // Montador
         string filepath = argv[1];
         Assembler* assembler = new Assembler(filepath);
         assembler->assemble();
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]) {
  	// Dois arquivos
     else if(argc == 3)
     {
-        cout << "TEM 2 AQRUIVOS HEIN" << endl;
+        // Montadores
         // Primeiro arquivo
         string filepath = argv[1];
         Assembler* assembler = new Assembler(filepath);
@@ -44,8 +45,6 @@ int main(int argc, char* argv[]) {
         Assembler* assembler2 = new Assembler(filepath2);
         assembler2->assemble();
     }
-
-
 
     return 0;
 }

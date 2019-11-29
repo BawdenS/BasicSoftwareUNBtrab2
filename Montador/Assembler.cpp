@@ -156,6 +156,7 @@ void Assembler::passagemZero() {
 
             // Logica para salvar a linha correta no arquivo com o codigo pre-processado
             if (this->apoio.find("EQU") !=std::string::npos) {
+//            if (vetor_palavras.at(i) == "EQU"){
                 this->flag_salva_linha = 0;
             }
             if (this->apoio.find("IF") != std::string::npos) {
