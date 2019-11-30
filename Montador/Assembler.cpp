@@ -422,8 +422,13 @@ void Assembler::passagemUm(){
     codigoObjeto << this->MapaRealocacao << endl;
     //Mapa de Publicos
     if(!this->tabela_de_simbolos->ListaDePublico.empty()){
+        
+        if(this->Modulo){
         codigoObjeto << this->tabela_de_simbolos->ListaDePublico.at(0) << " 0 ";
+        }
+        
         for(i = 0; i < this->tabela_de_simbolos->ListaDePublico.size();i++){
+            cout << this->tabela_de_simbolos->ListaDePublico.at(i)<< endl;
             for(j = 0;j < this->tabela_de_simbolos->lista_de_nomes.size();j++){
                 if(this->tabela_de_simbolos->ListaDePublico.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
                     codigoObjeto << this->tabela_de_simbolos->lista_de_nomes.at(j) << " " 
@@ -438,8 +443,10 @@ void Assembler::passagemUm(){
     if(!this->tabela_de_simbolos->ListaDeExterno.empty()){
         for(i = 0; i < this->tabela_de_simbolos->ListaDeExterno.size();i++){
             // cout << this->tabela_de_simbolos->ListaDeExterno.at(i)<< endl << endl;
+            
             codigoObjeto << this->tabela_de_simbolos->ListaDeExterno.at(i) << " ";
             for(j = 0;j < this->tabela_de_simbolos->lista_de_nomes.size();j++){
+
                 if(this->tabela_de_simbolos->ListaDeExterno.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
                     
                     for(k = 0;k < this->tabela_de_simbolos->lista_de_pendencias.at(j).size();k++){
