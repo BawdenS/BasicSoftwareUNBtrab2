@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
 	    // Montador
         string filepath = argv[1];
         Assembler* assembler = new Assembler(filepath);
+        
         assembler->assemble();
 	}
  	// Dois arquivos
@@ -38,11 +39,13 @@ int main(int argc, char* argv[]) {
         // Primeiro arquivo
         string filepath = argv[1];
         Assembler* assembler = new Assembler(filepath);
+        assembler->Modulo = true;
         assembler->assemble();
 
         // Segundo arquivo
         string filepath2 = argv[2];
         Assembler* assembler2 = new Assembler(filepath2);
+        assembler2->Modulo = true;
         assembler2->assemble();
     }
 

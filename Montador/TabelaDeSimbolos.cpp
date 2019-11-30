@@ -13,6 +13,20 @@ TabelaDeSimbolos::TabelaDeSimbolos() {
 TabelaDeSimbolos::~TabelaDeSimbolos() {
 }
 
+/***********************************************************
+ * Funcao que Registra Externo *
+ **********************************************************/
+void TabelaDeSimbolos::RegistraExterno(string nome){
+	this->ListaDeExterno.push_back(nome);
+
+}
+/***********************************************************
+ * Funcao que Registra Publico *
+ **********************************************************/
+void TabelaDeSimbolos::RegistraPublico(string nome){
+	this->ListaDePublico.push_back(nome);
+}
+
 
 /***********************************************************
  * Funcao que acrescenta um elemento na tabela de simbolos *
@@ -114,7 +128,7 @@ string TabelaDeSimbolos::procuraElemento(string nome, int posicao, string anteri
  * Funcao que procura alguma pendencia de endereco no codigo *
  ************************************************************/
 void TabelaDeSimbolos::procuraPendencias(string nome, int posicao, vector<string>* opcodes, int flagtipos, int tamanho, int linha) {
-    int i, numero = 0, auxint = 0;
+    int i, numero = 0, auxint = 0, flag = 0;
     bool igual = false;
 	string aux;
 	//traduz a flag para um tipo
@@ -140,6 +154,7 @@ void TabelaDeSimbolos::procuraPendencias(string nome, int posicao, vector<string
 //			cout << "Erro semantico linha: " << linha << endl;
 		}
 		else {
+			flag = 1;
 			while (!this->lista_de_pendencias.at(numero).empty()) {
 				this->endereco.at(numero) = posicao;
 				this->definido.at(numero) = true;
@@ -213,6 +228,20 @@ void TabelaDeSimbolos::procuraPendencias(string nome, int posicao, vector<string
 		}
     }
 
+
     //Adciona novo elemento
+	if(flag == 1){
+	this->lista_de_nomes.erase(this->lista_de_nomes.begin() + numero);
+	this->endereco.erase(this->endereco.begin() + numero);
+    this->definido.erase(this->definido.begin() + numero);
+    this->lista_de_pendencias.erase(this->lista_de_pendencias.begin() + numero);
+	//this->tipo.erase(this->tipo.begin() + numero);
+	}
+	
+    
 	this->elementoDefinido(nome, posicao, aux);
+
+
+
+
 }

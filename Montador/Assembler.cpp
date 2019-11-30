@@ -167,7 +167,8 @@ void Assembler::passagemZero() {
             }
             // Escreve no arquivo pre-processado se a linha nao tem IF/EQU ou se a linha anterior nao era IF 0
             if (this->flag_salva_linha == 1) {
-                if(posiTEXT == true)
+                if(posiTEXT == true || this->apoio.find("BEGIN") != std::string::npos
+                || this->apoio.find("EXTERN") != std::string::npos || this->apoio.find("PUBLIC") != std::string::npos)
                 {
                     if (vetor_palavras.size() > 1)
                     {
@@ -370,7 +371,7 @@ string Assembler::hexad(string word) {
  * Funcao que separa as palavras de cada linha *
  **********************************************/
 void Assembler::passagemUm(){
-    int i = 0, posicaotabela = 0;
+    int i = 0, j, k, posicaotabela = 0;
 
 	this->linha_coluna_contador = 0;
 
@@ -402,7 +403,6 @@ void Assembler::passagemUm(){
     if(!section_text_present){
 //        cout << "Erro semantico: Secao TEXT faltante" << endl;
     }
-    int j;
 	//cout << saida << endl;
     for (i = 0; i < this->tabela_de_simbolos->definido.size();i++) {
 		if (this->tabela_de_simbolos->definido.at(i) == false)
@@ -412,6 +412,52 @@ void Assembler::passagemUm(){
           }
 		}
 	}
+    
+    //alterar aqui a saida da maneira que o professor quer.
+    //nome do arquivo
+    codigoObjeto << this->file_path.substr(0,this->file_path.find(".")) << endl;
+    //tamanho do arquivo
+    codigoObjeto << this->opcodes.size() << endl;
+    //Mapa de realocacao
+    codigoObjeto << this->MapaRealocacao << endl;
+    //Mapa de Publicos
+    if(!this->tabela_de_simbolos->ListaDePublico.empty()){
+        codigoObjeto << this->tabela_de_simbolos->ListaDePublico.at(0) << " 0 ";
+        for(i = 0; i < this->tabela_de_simbolos->ListaDePublico.size();i++){
+            for(j = 0;j < this->tabela_de_simbolos->lista_de_nomes.size();j++){
+                if(this->tabela_de_simbolos->ListaDePublico.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
+                    codigoObjeto << this->tabela_de_simbolos->lista_de_nomes.at(j) << " " 
+                    << this->tabela_de_simbolos->endereco.at(j) << " ";
+                    break;
+                }
+            }
+        }
+    }
+    codigoObjeto << endl;
+    // Mapa de Externos
+    if(!this->tabela_de_simbolos->ListaDeExterno.empty()){
+        for(i = 0; i < this->tabela_de_simbolos->ListaDeExterno.size();i++){
+            // cout << this->tabela_de_simbolos->ListaDeExterno.at(i)<< endl << endl;
+            codigoObjeto << this->tabela_de_simbolos->ListaDeExterno.at(i) << " ";
+            for(j = 0;j < this->tabela_de_simbolos->lista_de_nomes.size();j++){
+                if(this->tabela_de_simbolos->ListaDeExterno.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
+                    
+                    for(k = 0;k < this->tabela_de_simbolos->lista_de_pendencias.at(j).size();k++){
+                        codigoObjeto << to_string(this->tabela_de_simbolos->lista_de_pendencias.at(j).back()) << " ";
+                    }
+                    break;
+                }
+            }
+            codigoObjeto << "-1 ";
+
+
+
+        }
+        codigoObjeto << "-1" << endl;
+    }
+    else{ codigoObjeto << "-1" << endl; }
+
+
 
     codigoObjeto << saida;
     codigoObjeto.close();          // Fecha o arquivo com o codigo fonte
@@ -469,8 +515,16 @@ void Assembler::checaMneumonico(int *posicaotabela) {
 
             i++; // pula palavra posterior
         }
+
+        else if(this->vetor_palavras.at(i) == "PUBLIC"){
+            //cout  << this->vetor_palavras.at(i+1)<< endl;
+            this->tabela_de_simbolos->RegistraPublico(this->vetor_palavras.at(i+1));
+            i++;
+        }
+
         else if (this->vetor_palavras.at(i) == "SPACE") {
-			this->linha_coluna_contador++;
+				//this->MapaRealocacao += "0 ";			
+            this->linha_coluna_contador++;
 
             // Erro de diretiva na secao errada
             // Secao DATA posterior a secao TEXT
@@ -490,6 +544,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             if (this->vetor_palavras.size() - 1 > i) {
 				this->linha_coluna_contador += stoi(this->vetor_palavras.at(i + 1)) - 1;
                 for (j = 0; j < stoi(this->vetor_palavras.at(i + 1)); j++) {
+                    this->MapaRealocacao += "0 ";
                     this->opcodes.push_back("00");
                 }
 
@@ -501,10 +556,11 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "ADD") {
-			this->opcodes.push_back("1");           // Coloca o opcode da instrucao no vetor
+            this->MapaRealocacao += "0 1 ";
+			
+            this->opcodes.push_back("1");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
 			trataErros(&i, 1);          // Chama a funcao de tratamento de erros
-
             // Erro de diretiva na secao errada
             // Secao DATA posterior a secao TEXT
             if(data_field_start > text_field_start){
@@ -520,10 +576,10 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "SUB") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("2");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
 			trataErros(&i, 1);          // Chama a funcao de tratamento de erros
-
             // Erro de diretiva na secao errada
             // Secao DATA posterior a secao TEXT
             if(data_field_start > text_field_start){
@@ -539,10 +595,11 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "MULT") {
+            this->MapaRealocacao += "0 1 ";
+            
             this->opcodes.push_back("3");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
-
             // Erro de diretiva na secao errada
             // Secao DATA posterior a secao TEXT
             if(data_field_start > text_field_start){
@@ -558,10 +615,10 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "DIV") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("4");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
-
             // Erro de diretiva na secao errada
             // Secao DATA posterior a secao TEXT
             if(data_field_start > text_field_start){
@@ -577,6 +634,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "JMP") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("5");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -596,6 +654,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "JMPN") {
+            this->MapaRealocacao += "0 1 ";            
             this->opcodes.push_back("6");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -615,6 +674,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "JMPP") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("7");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -634,6 +694,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "JMPZ") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("8");           // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -653,6 +714,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "COPY") {
+            this->MapaRealocacao += "0 1 1 ";
             this->opcodes.push_back("9");
 			this->linha_coluna_contador++;
 			// Coloca o opcode da instrucao no vetor
@@ -673,6 +735,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "LOAD") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("10");          // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -692,6 +755,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "STORE") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("11");          // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -711,6 +775,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "INPUT") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("12");          // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -730,6 +795,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "OUTPUT") {
+            this->MapaRealocacao += "0 1 ";
             this->opcodes.push_back("13");          // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
             trataErros(&i, 1);          // Chama a funcao de tratamento de erros
@@ -749,6 +815,7 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         else if (this->vetor_palavras.at(i) == "STOP") {
+            this->MapaRealocacao += "0 ";
             this->opcodes.push_back("14");          // Coloca o opcode da instrucao no vetor
 			this->linha_coluna_contador++;
 
@@ -767,12 +834,24 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
         }
         // if nao gerais
+        else if(this->vetor_palavras.at(i) == "END"){
+            if(this->Endantes == true){
+                cout << "Erro Semantico END antes de Begin"<< endl;
+            }
+            this->ContadorEnd++;
+            if(this->ContadorEnd != 1){
+                cout << "Erro semantico: Mais de um END por modulo" << endl;
+            }
+        }
+
+
+
         // label definida
         else if (this->vetor_palavras.at(i).find(":") != std::string::npos)
         {
 			//this->linha_coluna_contador--;
 			if (this->vetor_palavras.at(i+1) == "SPACE") {
-				//valor a ser passado para procuraPendencias que sinaliza que o rotulo eh tipo SPACE
+                //valor a ser passado para procuraPendencias que sinaliza que o rotulo eh tipo SPACE
 				flagtipo = 0;
 				tamanho = 1;
 				//se tem space vetorizado conserta o valor de tamanho
@@ -780,21 +859,53 @@ void Assembler::checaMneumonico(int *posicaotabela) {
 					tamanho = stoi(this->vetor_palavras.at(i + 2)) - 1;
 
 				}
+                this->apoio = this->vetor_palavras.at(i).substr(0, this->vetor_palavras.at(i).find(":"));
+                tabela_de_simbolos->procuraPendencias(this->apoio, this->linha_coluna_contador, &this->opcodes, flagtipo, tamanho, pc_pre_processado);
+                posicaotabela--;                
 			}
 
 			else if (this->vetor_palavras.at(i + 1) == "CONST") {
-				//valor a ser passado para procuraPendencias que sinaliza que o rotulo eh tipo CONST
+				this->MapaRealocacao += "0 ";
+                //valor a ser passado para procuraPendencias que sinaliza que o rotulo eh tipo CONST
 				flagtipo = 1;
 				tamanho = 1;
+                this->apoio = this->vetor_palavras.at(i).substr(0, this->vetor_palavras.at(i).find(":"));
+                tabela_de_simbolos->procuraPendencias(this->apoio, this->linha_coluna_contador, &this->opcodes, flagtipo, tamanho, pc_pre_processado);
+                posicaotabela--;
 			}
+            else if(this->vetor_palavras.at(i + 1) == "BEGIN"){
+                
+                this->Endantes = false;
+                if(this->Modulo == true){
+                    this->ContadorBegin++;
+                    if(ContadorBegin != 1){
+                        cout << "Erro semantico: Mais de um Begin por modulo" << endl;
+                    }
+                    this->tabela_de_simbolos->RegistraPublico(this->vetor_palavras.at(i).substr(0,this->vetor_palavras.at(i).find(":")) );
+                }
+                if(this->Modulo == false){
+                    cout << "Erro Semantico: Begin em montagem de so um arquivo" << endl;
+                }
+                i++;
+            }
+            else if(this->vetor_palavras.at(i + 1) == "EXTERN"){
+                //cout << this->vetor_palavras.at(i).substr(0,this->vetor_palavras.at(i).find(":"))  << endl;
+                
+                this->tabela_de_simbolos->RegistraExterno(this->vetor_palavras.at(i).substr(0,this->vetor_palavras.at(i).find(":")) );
+                i++;
+            }
+
+
 			else {
 				//valor a ser passado para procuraPendencias que sinaliza que o rotulo eh tipo Rotulo para JMP
 				flagtipo = 2;
 				tamanho = 1;
-			}
-            this->apoio = this->vetor_palavras.at(i).substr(0, this->vetor_palavras.at(i).find(":"));
-            tabela_de_simbolos->procuraPendencias(this->apoio, this->linha_coluna_contador, &this->opcodes, flagtipo, tamanho, pc_pre_processado);
-            posicaotabela--;
+                this->apoio = this->vetor_palavras.at(i).substr(0, this->vetor_palavras.at(i).find(":"));
+                tabela_de_simbolos->procuraPendencias(this->apoio, this->linha_coluna_contador, &this->opcodes, flagtipo, tamanho, pc_pre_processado);
+                posicaotabela--;
+             }
+
+            
 		}
         //label nao definida
         else {
@@ -805,7 +916,6 @@ void Assembler::checaMneumonico(int *posicaotabela) {
         posicaotabela++;
 
     }
-    //todo realizar mudança de assembly para ca
 }
 
 

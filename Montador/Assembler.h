@@ -15,7 +15,7 @@ public:
     Assembler(string caminho_do_arquivo);     // Construtor
     ~Assembler();                  // Destrutor
     void assemble();               // Funcao que monta o programa
-
+    bool Modulo = false;                    //se for true tem dois modulos e deve ter begin e end
 private:
     void passagemZero();     // Funcao para leitura do codigo fonte
     void padrao();           // Funcao para retirar comentarios e ignorar letras maiusculas/minusculas
@@ -30,6 +30,9 @@ private:
     vector<string> lista_temp_valor;
     vector<string> vetor_palavras;
     vector<string> opcodes;
+    string MapaRealocacao;
+    int ContadorBegin = 0, ContadorEnd = 0;
+    bool Endantes = true;
 
     TabelaDeSimbolos* tabela_de_simbolos;
     string file_path, file_pre, file_obj, line, saida, apoio;

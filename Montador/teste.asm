@@ -1,9 +1,14 @@
-AA: EQU 1
+mod_A: Begin
+public fat
+Y: extern
+X: extern
+Z: extern
+Section text
+add Y
+sub fat
+stop
 SECTION data
 cinco: CONST 5
-l1: space 2
-sete: const 7
-seis: const 6
-Section text
-copy AA,l1+AA
-stop
+fat: space 2
+end
+
