@@ -13,9 +13,8 @@ using namespace std;
 void ligacaoSolo(char* arquivo){
     // todo - abrir um arquivo de texto para escrever
     // todo - se for 1 .obj, soh remover cabecalhos, copiar e colar e ta feito
-    int i;//, Acumulador = 0;
+    int i;
     string NomeArquivo = arquivo, Linha, Word;
-//    vector<int> Unidade;
     vector<string> Opcodes;
     ifstream Leitura;
 
@@ -23,14 +22,15 @@ void ligacaoSolo(char* arquivo){
     Leitura.open(NomeArquivo.c_str());
     if (!Leitura.is_open())
     {
-        cerr << " Nao eh possivel abrir arquivo" << endl;
+        cerr << "\nNao eh possivel abrir o arquivo" << endl;
     }
     else {
+        cout << "\nArquivo aberto corretamente" << endl;
+
         // Coloca os opcodes no vector Unidade
         while (getline(Leitura, Linha)) {
             istringstream iss(Linha);
             while (iss >> Word) {
-//                Unidade.push_back(stoi(Word));
                 Opcodes.push_back(Word);
             }
         }
@@ -48,59 +48,89 @@ void ligacaoSolo(char* arquivo){
 //////////////////////////////////////////////////////////////
 void ligacaoDupla(char* arquivo1, char* arquivo2){
     // todo - se nao for, arrumar .text e .data dos dois e somar enderecos com tamanhos
-    int i;//, Acumulador = 0;
+    int i, text1Size;
+    bool finalText1 = false, finalText2 = false;
     string NomeArquivo = arquivo1, Linha, Word;
-//    vector<int> Unidade;
-    vector<string> Opcodes;
+    vector<string> OpcodesText, OpcodesData;
     ifstream Leitura;
 
     // Checa se eh possivel abrir o arquivo1
     Leitura.open(NomeArquivo.c_str());
     if (!Leitura.is_open())
     {
-        cerr << " Nao eh possivel abrir arquivo1" << endl;
+        cerr << "\nNao eh possivel abrir o primeiro arquivo" << endl;
     }
     else {
+        cout << "\nPrimeiro arquivo aberto corretamente" << endl;
         // Coloca os opcodes no vector Unidade
         while (getline(Leitura, Linha)) {
             istringstream iss(Linha);
             while (iss >> Word) {
-//                Unidade.push_back(stoi(Word));
-                Opcodes.push_back(Word);
+//                OpcodesText.push_back(Word);
+                if(!finalText1){
+                    if(Word == "14")
+                        finalText1 = true;
+                    else
+                        OpcodesText.push_back(Word);
+                }
+                else
+                    OpcodesData.push_back(Word);
             }
         }
-        for (i = 0; i < Opcodes.size(); i++) {
-            cout << Opcodes[i] << " ";
+
+        // Print para verificar se a leitura está sendo feita de forma correta
+        cout << "Opcodes text presentes no arquivo1 sem STOP: ";
+        for (i = 0; i < OpcodesText.size(); i++) {
+            cout << OpcodesText[i] << " ";
         }
         cout << endl;
     }
     Leitura.close();
 
     // Limpa o vetor com os opcodes
-    Opcodes.clear();
+    text1Size = OpcodesText.size();
+    cout << "O tamanho da secao text do primeiro arquivo eh: " << text1Size << endl;
+    OpcodesText.clear();
     NomeArquivo = arquivo2;
 
     // Checa se eh possivel abrir o arquivo2
     Leitura.open(NomeArquivo.c_str());
     if (!Leitura.is_open())
     {
-        cerr << " Nao eh possivel abrir arquivo1" << endl;
+        cerr << "Nao eh possivel abrir o segundo arquivo" << endl;
     }
     else {
+        cout << "\nSegundo arquivo aberto corretamente" << endl;
+
         // Coloca os opcodes no vector Unidade
         while (getline(Leitura, Linha)) {
             istringstream iss(Linha);
             while (iss >> Word) {
-//                Unidade.push_back(stoi(Word));
-                Opcodes.push_back(Word);
+                if(!finalText2){
+                    if(Word == "14")
+                        finalText2 = true;
+                    OpcodesText.push_back(Word);
+                }
+                else
+                    OpcodesData.push_back(Word);
             }
         }
-        for (i = 0; i < Opcodes.size(); i++) {
-            cout << Opcodes[i] << " ";
+
+        // Print para verificar se a leitura está sendo feita de forma correta
+        cout << "Opcodes text presentes no arquivo2, mas sem a somados enderecos: ";
+        for (i = 0; i < OpcodesText.size(); i++) {
+            cout << OpcodesText[i] << " ";
         }
         cout << endl;
     }
     Leitura.close();
+
+    // Print para verificar se a leitura está sendo feita de forma correta
+    cout << "Opcodes data ja concatenados, mas sem a soma dos enderecos: ";
+    for (i = 0; i < OpcodesData.size(); i++) {
+        cout << OpcodesData[i] << " ";
+    }
+    cout << endl;
 };
 
 int main(int argc, char* argv[]) {

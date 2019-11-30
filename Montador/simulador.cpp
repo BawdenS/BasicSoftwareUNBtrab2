@@ -20,7 +20,7 @@ int main(int Nargumentos, char*Argumentos[]){
         Leitura.open(NomeArquivo.c_str());
         if (!Leitura.is_open())
         {
-            cerr << " Nao eh possivel abrir arquivo" << endl;
+            cerr << "Nao eh possivel abrir arquivo" << endl;
             exit(1);
         }
 
