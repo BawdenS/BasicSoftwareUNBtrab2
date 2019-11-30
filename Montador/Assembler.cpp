@@ -428,7 +428,7 @@ void Assembler::passagemUm(){
         }
         
         for(i = 0; i < this->tabela_de_simbolos->ListaDePublico.size();i++){
-            cout << this->tabela_de_simbolos->ListaDePublico.at(i)<< endl;
+//            cout << this->tabela_de_simbolos->ListaDePublico.at(i)<< endl;
             for(j = 0;j < this->tabela_de_simbolos->lista_de_nomes.size();j++){
                 if(this->tabela_de_simbolos->ListaDePublico.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
                     codigoObjeto << this->tabela_de_simbolos->lista_de_nomes.at(j) << " " 
