@@ -33,6 +33,7 @@ int main(int Nargumentos, char*Argumentos[]){
             }
         }
         for (i = 0; i < Unidade.size();i++) {
+//            cout << "i: " << i << endl;
             //ADD
             if (Unidade.at(i) == 1){
                 Acumulador += Unidade.at(Unidade.at(i + 1));
@@ -47,6 +48,9 @@ int main(int Nargumentos, char*Argumentos[]){
             }
                 //MULT
             else if (Unidade.at(i) == 3) {
+//                cout << "Unidade.at(i + 1): " << Unidade.at(i + 1) << endl;
+//                cout << "Unidade.at(Unidade.at(i + 1)): " << Unidade.at(Unidade.at(i + 1)) << endl;
+
                 Acumulador *= Unidade.at(Unidade.at(i + 1));
                 i++;
                 cout << "Acumulador: " << Acumulador << endl;
@@ -59,13 +63,15 @@ int main(int Nargumentos, char*Argumentos[]){
             }
                 //JMP
             else if (Unidade.at(i) == 5) {
-                i = Unidade.at(i++);
+//                cout << "i antes: " << i << endl;
+                i = Unidade.at(++i) - 1; //subtrai 1, pois o for ja incrementa
                 cout << "Acumulador: " << Acumulador << endl;
+//                cout << "i depois: " << i << endl;
             }
                 //JMPN
             else if (Unidade.at(i) == 6) {
                 if (Acumulador < 0) {
-                    i = Unidade.at(i++);
+                    i = Unidade.at(++i) - 1; //subtrai 1, pois o for ja incrementa
                 }
                 else
                 {
@@ -76,7 +82,7 @@ int main(int Nargumentos, char*Argumentos[]){
                 //JMPP
             else if (Unidade.at(i) == 7) {
                 if (Acumulador > 0) {
-                    i = Unidade.at(i++);
+                    i = Unidade.at(++i) - 1; //subtrai 1, pois o for ja incrementa
                 }
                 else
                 {
@@ -87,7 +93,7 @@ int main(int Nargumentos, char*Argumentos[]){
                 //JMPZ
             else if (Unidade.at(i) == 8) {
                 if (Acumulador == 0) {
-                    i = Unidade.at(i++);
+                    i = Unidade.at(++i) - 1; //subtrai 1, pois o for ja incrementa
                 }
                 else
                 {
@@ -110,9 +116,12 @@ int main(int Nargumentos, char*Argumentos[]){
             }
                 //STORE
             else if (Unidade.at(i) == 11) {
+//                cout << "i antes do store: " << i << endl;
                 Unidade.at(Unidade.at(i + 1)) = Acumulador;
-                cout << "Memoria em: "<< Unidade.at(i + 1) << " Alterada para: " << Acumulador << endl;
+                cout << "Memoria em: "<< Unidade.at(i + 1) << " Alterada para: " << Unidade.at(Unidade.at(i + 1)) << endl;
                 cout << "Acumulador: " << Acumulador << endl;
+//                cout << "i depois do store: " << i << endl;
+                i++;
             }
                 //INPUT
             else if (Unidade.at(i) == 12) {
@@ -125,6 +134,7 @@ int main(int Nargumentos, char*Argumentos[]){
                 //OUTPUT
             else if (Unidade.at(i) == 13) {
                 cout << "O Valor de Saida eh: " << Unidade.at(Unidade.at(i + 1)) << endl;
+//                cout << "Unidade.at(i+1): " << Unidade.at(i + 1) << endl;
                 i++;
             }
                 //STOP

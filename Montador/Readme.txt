@@ -1,6 +1,6 @@
 /*###################################################################
 # Universidade de Brasilia                                          #
-#      Disciplina de Software Basico - Trabalho 1                   #
+#      Disciplina de Software Basico - Trabalho 2                   #
 #                                                                   #
 #           Alunos                                  Matriculas      #
 #                                                                   #
@@ -15,6 +15,10 @@
 O trabalho foi em c++ para rodar o LINUX, Ubuntu 7.4.0-1ubuntu1~18.04.1, consiste de um Programa montador e um Programa simulador que recebem por argumento os arquivos .asm e um arquivo .obj respectivamente.
 Os comandos necessários são:
 g++ main.cpp Assembler.cpp TabelaDeSimbolos.cpp -o montador
-./montador exemplo.asm
+./montador exemplo.asm ou ./montador exemplo1.asm exemplo2.asm
+g++ ligador.cpp -o ligador
+./ligador exemplo.obj ou ./ligador exemplo1.obj exemplo2.obj
 g++ simulador.cpp -o simulador
-./simulador exemplo.obj
+./simulador ArquivoDeSaida.obj
+
+ATENCAO O NOME DO ARGUMENTO DO SIMULADOR NAO FOI ESPECIFICADO EM ROTEIRO, COLOCAMOS 'ArquivoDeSaida.obj' !!!!!
