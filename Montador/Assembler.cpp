@@ -466,6 +466,14 @@ void Assembler::passagemUm(){
     else{ codigoObjeto << "-1" << endl; }
 
 
+    if(this->Modulo){
+        if(this->ContadorBegin == 0){
+            cout << "Erro semantico: Ausencia de BEGIN no codigo!" << endl;
+        }
+        if(this->ContadorEnd == 0){
+            cout << "Erro semantico: Ausencia de END no codigo!" << endl;
+        }
+    }
 
     codigoObjeto << saida;
     codigoObjeto.close();          // Fecha o arquivo com o codigo fonte
