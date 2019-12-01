@@ -450,7 +450,8 @@ void Assembler::passagemUm(){
                 if(this->tabela_de_simbolos->ListaDeExterno.at(i) == this->tabela_de_simbolos->lista_de_nomes.at(j)){
                     
                     for(k = 0;k < this->tabela_de_simbolos->lista_de_pendencias.at(j).size();k++){
-                        codigoObjeto << to_string(this->tabela_de_simbolos->lista_de_pendencias.at(j).back()) << " ";
+                        codigoObjeto << to_string(this->tabela_de_simbolos->lista_de_pendencias.at(j).at(k)) << " ";
+                        //this->tabela_de_simbolos->lista_de_pendencias.at(j).pop_back();
                     }
                     break;
                 }
@@ -530,7 +531,6 @@ void Assembler::checaMneumonico(int *posicaotabela) {
         }
 
         else if (this->vetor_palavras.at(i) == "SPACE") {
-				//this->MapaRealocacao += "0 ";			
             this->linha_coluna_contador++;
 
             // Erro de diretiva na secao errada
@@ -559,6 +559,8 @@ void Assembler::checaMneumonico(int *posicaotabela) {
             }
             // Caso de declaracao de uma variavel
             else{
+				this->MapaRealocacao += "0 ";			
+
                 this->opcodes.push_back("00");
             }
         }
